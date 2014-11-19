@@ -1,0 +1,13 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "4.4",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "VIVE_Connector",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}

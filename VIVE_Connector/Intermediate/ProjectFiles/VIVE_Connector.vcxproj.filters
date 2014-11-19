@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<None Include="..\..\VIVE_Connector.uproject" />
+		<Filter Include="Source">
+			<UniqueIdentifier>{213FC0D8-4EA0-47EF-9CE0-A9E9116C37D1}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Source\VIVE_Connector.Target.cs">
+			<Filter>Source</Filter>
+		</None >
+		<None Include="..\..\Source\VIVE_ConnectorEditor.Target.cs">
+			<Filter>Source</Filter>
+		</None >
+		<Filter Include="Config">
+			<UniqueIdentifier>{119703EB-9213-4E50-BE0C-BEBFB05C1E55}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Config\DefaultEditor.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultEngine.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultGame.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultInput.ini">
+			<Filter>Config</Filter>
+		</None >
+		<Filter Include="Source\VIVE_Connector">
+			<UniqueIdentifier>{D5E72E89-2F18-4EA0-9F63-1561C01514E4}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Source\VIVE_Connector\VIVE_Connector.Build.cs">
+			<Filter>Source\VIVE_Connector</Filter>
+		</None >
+		<Filter Include="Source\VIVE_Connector\Private">
+			<UniqueIdentifier>{2350BD5A-93AB-4778-8241-075DBDCCFC90}</UniqueIdentifier>
+		</Filter>
+		<ClCompile Include="..\..\Source\VIVE_Connector\Private\VIVE_Connector.cpp">
+			<Filter>Source\VIVE_Connector\Private</Filter>
+		</ClCompile >
+		<ClCompile Include="..\..\Source\VIVE_Connector\Private\VIVE_ConnectorCharacter.cpp">
+			<Filter>Source\VIVE_Connector\Private</Filter>
+		</ClCompile >
+		<ClCompile Include="..\..\Source\VIVE_Connector\Private\VIVE_ConnectorGameMode.cpp">
+			<Filter>Source\VIVE_Connector\Private</Filter>
+		</ClCompile >
+		<ClCompile Include="..\..\Source\VIVE_Connector\Private\VIVE_ConnectorHUD.cpp">
+			<Filter>Source\VIVE_Connector\Private</Filter>
+		</ClCompile >
+		<ClCompile Include="..\..\Source\VIVE_Connector\Private\VIVE_ConnectorProjectile.cpp">
+			<Filter>Source\VIVE_Connector\Private</Filter>
+		</ClCompile >
+		<Filter Include="Source\VIVE_Connector\Public">
+			<UniqueIdentifier>{51F58C5D-DECD-4126-BF31-5E618A6EE13B}</UniqueIdentifier>
+		</Filter>
+		<ClInclude Include="..\..\Source\VIVE_Connector\Public\VIVE_Connector.h">
+			<Filter>Source\VIVE_Connector\Public</Filter>
+		</ClInclude >
+		<ClInclude Include="..\..\Source\VIVE_Connector\Public\VIVE_ConnectorCharacter.h">
+			<Filter>Source\VIVE_Connector\Public</Filter>
+		</ClInclude >
+		<ClInclude Include="..\..\Source\VIVE_Connector\Public\VIVE_ConnectorGameMode.h">
+			<Filter>Source\VIVE_Connector\Public</Filter>
+		</ClInclude >
+		<ClInclude Include="..\..\Source\VIVE_Connector\Public\VIVE_ConnectorHUD.h">
+			<Filter>Source\VIVE_Connector\Public</Filter>
+		</ClInclude >
+		<ClInclude Include="..\..\Source\VIVE_Connector\Public\VIVE_ConnectorProjectile.h">
+			<Filter>Source\VIVE_Connector\Public</Filter>
+		</ClInclude >
+		<Filter Include="Source\VIVE_Connector\Resources">
+			<UniqueIdentifier>{2833DF55-E55C-42A8-8F90-5D550E3A6261}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Source\VIVE_Connector\Resources\Windows">
+			<UniqueIdentifier>{4F2EFC1D-2A90-44AC-B56C-7EF925379A32}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Source\VIVE_Connector\Resources\Windows\VIVE_Connector.ico">
+			<Filter>Source\VIVE_Connector\Resources\Windows</Filter>
+		</None >
+		<ResourceCompile Include="..\..\Source\VIVE_Connector\Resources\Windows\VIVE_Connector.rc">
+			<Filter>Source\VIVE_Connector\Resources\Windows</Filter>
+		</ResourceCompile >
+	</ItemGroup>
+</Project>
