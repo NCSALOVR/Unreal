@@ -4,6 +4,11 @@
 #include "ViveViewGameMode.h"
 #include "ViveViewHUD.h"
 #include "ViveViewCharacter.h"
+#include <iostream>
+#include <fstream>
+#include "CoreMisc.h"
+#include <string>
+
 
 AViveViewGameMode::AViveViewGameMode(const class FPostConstructInitializeProperties& PCIP)
 	: Super(PCIP)
@@ -23,12 +28,31 @@ AViveViewGameMode::AViveViewGameMode(const class FPostConstructInitializePropert
 
 void AViveViewGameMode::updateFromVive()
 {
+	std::ifstream actorF;
+	actorF.open("ActorList.txt");
+	if (actorF.is_open())
+	{
+		std::ofstream configF;
+		configF.open("config.txt");
+		configF << "Hello!";
+		configF.close();
+	}
+	else
+	{
+		std::ofstream configF;
+		configF.open("config.txt");
+		configF << "oh no!";
+		configF.close();
+	}
 	
+	
+	actorF.close();
+	return;
 }
 
 
 void AViveViewGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	updateFromVive();
+	updateFromVive();			///going to be changed to only focus on
 }
