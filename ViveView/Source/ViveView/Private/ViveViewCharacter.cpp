@@ -5,6 +5,8 @@
 #include "ViveViewProjectile.h"
 #include "Animation/AnimInstance.h"
 
+#include <fstream>
+
 
 //////////////////////////////////////////////////////////////////////////
 // AViveViewCharacter
@@ -66,6 +68,7 @@ void AViveViewCharacter::SetupPlayerInputComponent(class UInputComponent* InputC
 
 void AViveViewCharacter::OnFire()
 {
+	/*commented out because firing is unnessary
 	// try and fire a projectile
 	if (ProjectileClass != NULL)
 	{
@@ -97,7 +100,7 @@ void AViveViewCharacter::OnFire()
 			AnimInstance->Montage_Play(FireAnimation, 1.f);
 		}
 	}
-
+	*/
 }
 
 void AViveViewCharacter::TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location)
@@ -138,3 +141,72 @@ void AViveViewCharacter::LookUpAtRate(float Rate)
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
+
+
+
+void AViveViewCharacter::UpdateFromVive()
+{
+	std::ifstream actorF;
+	actorF.open("ActorList.txt");
+	if (actorF.is_open())
+	{
+		std::ofstream configF;
+		configF.open("config.txt");
+		configF << "Hello!";
+		configF.close();
+	}
+	else
+	{
+		std::ofstream configF;
+		configF.open("config.txt");
+		configF << "oh no!";
+		configF.close();
+	}
+
+
+	actorF.close();
+	return;
+}
+
+
+
+void AViveViewCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+
+
+	FName testObj1 = "testObj1";
+
+	//simulate creation
+	ActorsToCreate.Add(FObjectActor());
+	ActorsToCreate[0].Id = testObj1;
+	ActorsToCreate[0].Status = "Active";
+	ActorsToCreate[0].Position.Set(100, 100, 100);
+	ActorsToCreate[0].Radius = 10;
+	ActorsAll[testObj1]=ActorsToCreate[0];
+
+	//simulate move
+	ActorsAll[testObj1].Position.Set(200, 200, 200);
+	ActorsToMove.Add(ActorsAll[testObj1]);
+
+	//simulate deletion
+	ActorsAll[testObj1].Status = "Destroyed";
+	ActorsToDestroy.Add(ActorsAll[testObj1]);
+
+	
+}
+/*
+ActorsToCreate.Empty();
+ActorsToMove.Empty();
+ActorsToDestroy.Empty();
+
+//updateFromVive();		//temporarily disabled to make use of dummy data
+
+ActorsToCreate.Add(FObjectActor());
+ActorsToCreate[0].Id = "test obj 1";
+ActorsToCreate[0].Status = "Active";
+ActorsToCreate[0].Position.Set(100, 100, 100);
+ActorsToCreate[0].Radius = 10;
+ActorsAll.Add(ActorsToCreate[0]);
+*/

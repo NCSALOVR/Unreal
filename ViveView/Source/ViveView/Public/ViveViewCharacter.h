@@ -1,7 +1,37 @@
 // Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "GameFramework/Character.h"
+
 #include "ViveViewCharacter.generated.h"
+
+
+
+/*************************************************************************
+Struct for containing minimal data of spawned objects in the room.
+*************************************************************************/
+USTRUCT()
+struct FObjectActor
+{
+	GENERATED_USTRUCT_BODY()
+
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = vive)
+		FName Id;
+		
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = vive)
+		FString Status;
+
+	//location
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = vive)
+		FVector Position;
+
+	//size
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = vive)
+		double Radius;
+};
+
+
 
 UCLASS(config=Game)
 class AViveViewCharacter : public ACharacter
@@ -40,6 +70,40 @@ class AViveViewCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UAnimMontage* FireAnimation;
 
+
+
+	/*************************************************************************
+	Arrays for tracking objects in room with player. If made to work, this
+	content will be moved to a world settings class. The arrays are separated
+	by needed action on the objects
+	*************************************************************************/
+	TMap<FName, FObjectActor> ActorsAll;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = vive)
+		TArray<FObjectActor> ActorsToCreate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = vive)
+		TArray<FObjectActor> ActorsToMove;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = vive)
+		TArray<FObjectActor> ActorsToDestroy;
+
+
+	/*************************************************************************
+	Handles parsing data into array data structures for Blueprints to use
+	for creating, moving, and destroying objects.
+	*************************************************************************/
+	UFUNCTION(BlueprintCallable, Category=vive)
+	void UpdateFromVive();
+
+
+	/*************************************************************************
+	Override to request update from vive every frame
+	*************************************************************************/
+	virtual void Tick(float DeltaSeconds) override;
+
+
+
 protected:
 
 	/** Handler for a touch input beginning. */
@@ -72,3 +136,19 @@ protected:
 	// End of APawn interface
 };
 
+
+
+/*
+
+UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = vive)
+TArray<FObjectActor> ActorsAll;
+
+UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = vive)
+TArray<FObjectActor> ActorsToCreate;
+
+UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = vive)
+TArray<FObjectActor> ActorsToMove;
+
+UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = vive)
+TArray<FObjectActor> ActorsToDestroy;
+*/

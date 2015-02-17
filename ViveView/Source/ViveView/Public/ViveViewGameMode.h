@@ -7,12 +7,6 @@ UCLASS(minimalapi)
 class AViveViewGameMode : public AGameMode
 {
 	GENERATED_UCLASS_BODY()
-
-
-	UFUNCTION(BlueprintCallable, category = vive)
-	void updateFromVive();
-
-	virtual void Tick(float DeltaSeconds) OVERRIDE;
 };
 
 
