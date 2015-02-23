@@ -7,6 +7,7 @@ UCLASS(minimalapi)
 class AViveViewGameMode : public AGameMode
 {
 	GENERATED_UCLASS_BODY()
+
 };
 
 

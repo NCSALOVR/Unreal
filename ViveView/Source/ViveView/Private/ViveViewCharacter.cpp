@@ -39,6 +39,17 @@ AViveViewCharacter::AViveViewCharacter(const class FPostConstructInitializePrope
 
 	// Note: The ProjectileClass and the skeletal mesh/anim blueprints for Mesh1P are set in the
 	// derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+
+
+	/*************************************************************************
+	Init obj containers
+	*************************************************************************/
+	etc = true;
+	ActorsAll.Init(0);
+	ActorsToCreate.Init(0);
+	ActorsToMove.Init(0);
+	ActorsToDestroy.Init(0);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -50,13 +61,13 @@ void AViveViewCharacter::SetupPlayerInputComponent(class UInputComponent* InputC
 	check(InputComponent);
 
 	InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	
+
 	InputComponent->BindAction("Fire", IE_Pressed, this, &AViveViewCharacter::OnFire);
 	InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AViveViewCharacter::TouchStarted);
 
 	InputComponent->BindAxis("MoveForward", this, &AViveViewCharacter::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &AViveViewCharacter::MoveRight);
-	
+
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
@@ -68,39 +79,7 @@ void AViveViewCharacter::SetupPlayerInputComponent(class UInputComponent* InputC
 
 void AViveViewCharacter::OnFire()
 {
-	/*commented out because firing is unnessary
-	// try and fire a projectile
-	if (ProjectileClass != NULL)
-	{
-		const FRotator SpawnRotation = GetControlRotation();
-		// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-		const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
-
-		UWorld* const World = GetWorld();
-		if (World != NULL)
-		{
-			// spawn the projectile at the muzzle
-			World->SpawnActor<AViveViewProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
-		}
-	}
-
-	// try and play the sound if specified
-	if (FireSound != NULL)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-	}
-
-	// try and play a firing animation if specified
-	if(FireAnimation != NULL)
-	{
-		// Get the animation object for the arms mesh
-		UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-		if(AnimInstance != NULL)
-		{
-			AnimInstance->Montage_Play(FireAnimation, 1.f);
-		}
-	}
-	*/
+	return;
 }
 
 void AViveViewCharacter::TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location)
@@ -164,6 +143,50 @@ void AViveViewCharacter::UpdateFromVive()
 	}
 
 
+	/*TODO:
+	use this for storing in ToMove or ToDestroy
+
+	FObjectActor* temp = NULL;
+	int i = 0;
+	while (i < ActorsAll.Num() && temp == NULL)
+	{
+	if (ActorsAll[i]->Id.Equals(objToKill->Id))
+	{
+	temp = ActorsAll[i];
+	}
+	i++;
+	}
+	*/
+
+
+
+	if (etc)
+	{
+		//DUMMY DATA
+		FString testObj1 = FString(TEXT("TestObj1"));
+		FObjectActor* temp = new FObjectActor();
+		temp->Id = testObj1;
+		temp->Position.Set(300, 300, 300);
+		temp->Radius = 1;
+
+
+		//simulate creation
+		ActorsToCreate.Add(temp);
+		/*
+		//simulate move
+		temp->Position.Set(200, 200, 200);
+		ActorsToMove.Add(temp);
+
+		//simulate deletion
+		ActorsToDestroy.Add(temp);
+		*/
+
+
+		etc = false;
+	}
+
+
+
 	actorF.close();
 	return;
 }
@@ -173,40 +196,55 @@ void AViveViewCharacter::UpdateFromVive()
 void AViveViewCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	UpdateFromVive();
+	UWorld* const world = GetWorld();
 
 
 
-	FName testObj1 = "testObj1";
+	//handle create requests
+	for (FObjectActor* newObj : ActorsToCreate)
+	{
+		if (ProjectileClass != NULL)
+		{
+			if (world != NULL)
+			{
+				newObj->Reference = world->SpawnActor
+					(
+					ProjectileClass,
+					&(newObj->Position)
+					);
 
-	//simulate creation
-	ActorsToCreate.Add(FObjectActor());
-	ActorsToCreate[0].Id = testObj1;
-	ActorsToCreate[0].Status = "Active";
-	ActorsToCreate[0].Position.Set(100, 100, 100);
-	ActorsToCreate[0].Radius = 10;
-	ActorsAll[testObj1]=ActorsToCreate[0];
+				newObj->Reference->SetActorScale3D(FVector(10));
 
-	//simulate move
-	ActorsAll[testObj1].Position.Set(200, 200, 200);
-	ActorsToMove.Add(ActorsAll[testObj1]);
+				ActorsAll.Add(newObj);
+			}
+		}
+	}
+	ActorsToCreate.Empty();
 
-	//simulate deletion
-	ActorsAll[testObj1].Status = "Destroyed";
-	ActorsToDestroy.Add(ActorsAll[testObj1]);
 
-	
+	//handle move requests
+	for (FObjectActor* objToMove : ActorsToMove)
+	{
+		objToMove->Reference->SetActorLocation(objToMove->Position, false);
+	}
+	ActorsToMove.Empty();
+
+
+	//handle destroy requests
+	for (FObjectActor* objToKill : ActorsToDestroy)
+	{
+		world->DestroyActor(objToKill->Reference);
+
+		ActorsAll.Remove(objToKill);
+		delete objToKill;
+	}
+	ActorsToDestroy.Empty();
+
+
+
+	return;
 }
-/*
-ActorsToCreate.Empty();
-ActorsToMove.Empty();
-ActorsToDestroy.Empty();
 
-//updateFromVive();		//temporarily disabled to make use of dummy data
 
-ActorsToCreate.Add(FObjectActor());
-ActorsToCreate[0].Id = "test obj 1";
-ActorsToCreate[0].Status = "Active";
-ActorsToCreate[0].Position.Set(100, 100, 100);
-ActorsToCreate[0].Radius = 10;
-ActorsAll.Add(ActorsToCreate[0]);
-*/
+

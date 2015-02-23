@@ -4,11 +4,6 @@
 #include "ViveViewGameMode.h"
 #include "ViveViewHUD.h"
 #include "ViveViewCharacter.h"
-#include <iostream>
-#include <fstream>
-#include "CoreMisc.h"
-#include <string>
-
 
 AViveViewGameMode::AViveViewGameMode(const class FPostConstructInitializeProperties& PCIP)
 	: Super(PCIP)
@@ -19,10 +14,4 @@ AViveViewGameMode::AViveViewGameMode(const class FPostConstructInitializePropert
 
 	// use our custom HUD class
 	HUDClass = AViveViewHUD::StaticClass();
-
-
-	
 }
-
-
-

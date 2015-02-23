@@ -12,12 +12,5 @@ class AViveViewProjectile : public AActor
 	UPROPERTY(VisibleDefaultsOnly, Category=Projectile)
 	TSubobjectPtr<class USphereComponent> CollisionComp;
 
-	/** Projectile movement component */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Movement)
-	TSubobjectPtr<class UProjectileMovementComponent> ProjectileMovement;
-
-	/** called when projectile hits something */
-	UFUNCTION()
-	void OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };
 
