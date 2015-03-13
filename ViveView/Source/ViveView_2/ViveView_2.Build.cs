@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class ViveView : ModuleRules
+public class ViveView_2 : ModuleRules
 {
-	public ViveView(TargetInfo Target)
+	public ViveView_2(TargetInfo Target)
 	{
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 	}

@@ -1,10 +1,7 @@
 // Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "GameFramework/Character.h"
-
-#include "ViveViewCharacter.generated.h"
-
-
+#include "ViveView_2Character.generated.h"
 
 /*************************************************************************
 Struct for containing minimal data of spawned objects in the room.
@@ -16,7 +13,7 @@ struct FObjectActor
 
 
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Vive)
+		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Vive)
 		FString Id;
 
 	//location
@@ -37,12 +34,12 @@ struct FObjectActor
 
 
 UCLASS(config = Game)
-class AViveViewCharacter : public ACharacter
+class AViveView_2Character : public ACharacter
 {
 	GENERATED_UCLASS_BODY()
 
 		/** Pawn mesh: 1st person view (arms; seen only by self) */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+		UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		TSubobjectPtr<class USkeletalMeshComponent> Mesh1P;
 
 	/** First person camera */
@@ -63,7 +60,7 @@ class AViveViewCharacter : public ACharacter
 
 	/** Projectile class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
-		TSubclassOf<class AViveViewProjectile> ProjectileClass;
+		TSubclassOf<class AViveView_2Projectile> ProjectileClass;
 
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
@@ -140,5 +137,4 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	// End of APawn interface
 };
-
 
