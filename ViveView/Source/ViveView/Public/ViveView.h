@@ -1,7 +1,7 @@
 // Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
 
-#ifndef __VIVEVIEW_2_H__
-#define __VIVEVIEW_2_H__
+#ifndef __VIVEVIEW_H__
+#define __VIVEVIEW_H__
 
 #include "EngineMinimal.h"
 
