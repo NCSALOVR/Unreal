@@ -1,10 +1,10 @@
 // Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
 
-#include "ViveView_2.h"
-#include "ViveView_2Projectile.h"
+#include "ViveView.h"
+#include "ViveViewProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
-AViveView_2Projectile::AViveView_2Projectile(const class FPostConstructInitializeProperties& PCIP) 
+AViveViewProjectile::AViveViewProjectile(const class FPostConstructInitializeProperties& PCIP)
 	: Super(PCIP)
 {
 	// Use a sphere as a simple collision representation
