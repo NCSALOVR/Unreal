@@ -1,11 +1,11 @@
 // Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
 
-#include "ViveView.h"
-#include "ViveViewGameMode.h"
-#include "ViveViewHUD.h"
-#include "ViveViewCharacter.h"
+#include "ViveView_2.h"
+#include "ViveView_2GameMode.h"
+#include "ViveView_2HUD.h"
+#include "ViveView_2Character.h"
 
-AViveViewGameMode::AViveViewGameMode(const class FPostConstructInitializeProperties& PCIP)
+AViveView_2GameMode::AViveView_2GameMode(const class FPostConstructInitializeProperties& PCIP)
 	: Super(PCIP)
 {
 	// set default pawn class to our Blueprinted character
@@ -13,5 +13,5 @@ AViveViewGameMode::AViveViewGameMode(const class FPostConstructInitializePropert
 	DefaultPawnClass = PlayerPawnClassFinder.Class;
 
 	// use our custom HUD class
-	HUDClass = AViveViewHUD::StaticClass();
+	HUDClass = AViveView_2HUD::StaticClass();
 }

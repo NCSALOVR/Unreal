@@ -1,12 +1,12 @@
 // Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
 
-#include "ViveView.h"
-#include "ViveViewHUD.h"
+#include "ViveView_2.h"
+#include "ViveView_2HUD.h"
 #include "Engine/Canvas.h"
 #include "TextureResource.h"
 #include "CanvasItem.h"
 
-AViveViewHUD::AViveViewHUD(const class FPostConstructInitializeProperties& PCIP) : Super(PCIP)
+AViveView_2HUD::AViveView_2HUD(const class FPostConstructInitializeProperties& PCIP) : Super(PCIP)
 {
 	// Set the crosshair texture
 	static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshiarTexObj(TEXT("/Game/Textures/Crosshair"));
@@ -14,7 +14,7 @@ AViveViewHUD::AViveViewHUD(const class FPostConstructInitializeProperties& PCIP)
 }
 
 
-void AViveViewHUD::DrawHUD()
+void AViveView_2HUD::DrawHUD()
 {
 	Super::DrawHUD();
 

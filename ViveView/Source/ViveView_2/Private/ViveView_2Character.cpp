@@ -1,8 +1,8 @@
 // Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
 
-#include "ViveView.h"
-#include "ViveViewCharacter.h"
-#include "ViveViewProjectile.h"
+#include "ViveView_2.h"
+#include "ViveView_2Character.h"
+#include "ViveView_2Projectile.h"
 #include "Animation/AnimInstance.h"
 #include "Engine.h"
 #include <string>
@@ -15,39 +15,35 @@
 //////////////////////////////////////////////////////////////////////////
 // AViveViewCharacter
 
-AViveViewCharacter::AViveViewCharacter(const class FPostConstructInitializeProperties& PCIP)
+AViveView_2Character::AViveView_2Character(const class FPostConstructInitializeProperties& PCIP)
 	: Super(PCIP)
 {
-	XOffset = 0;
-	YOffset = 0;
-	ZOffset = 220;
+	// Set size for collision capsule
+	CapsuleComponent->InitCapsuleSize(42.f, 96.0f);
 
-	PitchOffset = 0;
-	RollOffset = 0;
-	YawOffset = 0; //face east
-
+	// set our turn rates for input
+	BaseTurnRate = 45.f;
+	BaseLookUpRate = 45.f;
 
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = PCIP.CreateDefaultSubobject<UCameraComponent>(this, TEXT("FirstPersonCamera"));
+	FirstPersonCameraComponent->AttachParent = CapsuleComponent;
 	FirstPersonCameraComponent->RelativeLocation = FVector(0, 0, 64.f); // Position the camera
+
+	// Default offset from the character location for projectiles to spawn
+	GunOffset = FVector(100.0f, 30.0f, 10.0f);
 
 	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
 	Mesh1P = PCIP.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("CharacterMesh1P"));
-	Mesh1P->SetOnlyOwnerSee(true);			// only the owning player will see this mesh // not anymore!
+	Mesh1P->SetOnlyOwnerSee(true);			// only the owning player will see this mesh
+	Mesh1P->AttachParent = FirstPersonCameraComponent;
+	Mesh1P->RelativeLocation = FVector(0.f, 0.f, -150.f);
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->CastShadow = false;
-	Mesh1P->SetVisibility(false);	//no one should see the default perspective.
-
-	Mesh1P->AttachParent = FirstPersonCameraComponent;
-	Mesh1P->RelativeLocation = FVector(0, 0, -150);			//"My parent is 150 below me" I think
-
-	//Set default position direction of model. Rotation is in degrees.
-	//this->SetActorLocationAndRotation(FVector(), FRotator()); //constructor call overwritten by unreal engine
 
 	// Note: The ProjectileClass and the skeletal mesh/anim blueprints for Mesh1P are set in the
 	// derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
-	
 
 
 	/*************************************************************************
@@ -60,9 +56,78 @@ AViveViewCharacter::AViveViewCharacter(const class FPostConstructInitializePrope
 	ActorsToDestroy.Init(0);
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Input
+
+void AViveView_2Character::SetupPlayerInputComponent(class UInputComponent* InputComponent)
+{
+	// set up gameplay key bindings
+	check(InputComponent);
+
+	InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+
+	InputComponent->BindAction("Fire", IE_Pressed, this, &AViveView_2Character::OnFire);
+	InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AViveView_2Character::TouchStarted);
+
+	InputComponent->BindAxis("MoveForward", this, &AViveView_2Character::MoveForward);
+	InputComponent->BindAxis("MoveRight", this, &AViveView_2Character::MoveRight);
+
+	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
+	// "turn" handles devices that provide an absolute delta, such as a mouse.
+	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
+	InputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	InputComponent->BindAxis("TurnRate", this, &AViveView_2Character::TurnAtRate);
+	InputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	InputComponent->BindAxis("LookUpRate", this, &AViveView_2Character::LookUpAtRate);
+}
+
+void AViveView_2Character::OnFire()
+{
+	return;
+}
+
+void AViveView_2Character::TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location)
+{
+	// only fire for first finger down
+	if (FingerIndex == 0)
+	{
+		OnFire();
+	}
+}
+
+void AViveView_2Character::MoveForward(float Value)
+{
+	if (Value != 0.0f)
+	{
+		// add movement in that direction
+		AddMovementInput(GetActorForwardVector(), Value);
+	}
+}
+
+void AViveView_2Character::MoveRight(float Value)
+{
+	if (Value != 0.0f)
+	{
+		// add movement in that direction
+		AddMovementInput(GetActorRightVector(), Value);
+	}
+}
+
+void AViveView_2Character::TurnAtRate(float Rate)
+{
+	// calculate delta for this frame from the rate information
+	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+}
+
+void AViveView_2Character::LookUpAtRate(float Rate)
+{
+	// calculate delta for this frame from the rate information
+	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
 
 
-void AViveViewCharacter::UpdateFromVive()
+
+void AViveView_2Character::UpdateFromVive()
 {
 	std::ifstream actorF;
 	actorF.open("ActorList.json");
@@ -78,37 +143,17 @@ void AViveViewCharacter::UpdateFromVive()
 		/**************************************************************************
 		-send file to parser
 		-error check
-		-adjust avatar
 		-for each object under create, parse
 		-for each object under move, parse
 		-for each object under destroy, parse
 		-replace JSON with each category empty
 		**************************************************************************/
-		
+		//CREATE
 		TSharedPtr<FJsonObject> JsonParsed;
 		TSharedRef<TJsonReader<TCHAR>> JsonReader =
 			TJsonReaderFactory<TCHAR>::Create(FString(jsonStr.c_str()));
 		if (FJsonSerializer::Deserialize(JsonReader, JsonParsed))
 		{
-			//ADJUST AVATAR
-			const TSharedPtr<FJsonObject> avatar = JsonParsed->GetObjectField("avatar");
-			if (avatar->GetBoolField("changed"))
-			{
-				double x = avatar->GetArrayField("position")[0]->AsNumber();
-				double y = avatar->GetArrayField("position")[1]->AsNumber();
-				double z = avatar->GetArrayField("position")[2]->AsNumber();
-
-				double r = avatar->GetNumberField("rotation");
-
-
-				SetActorLocation(FVector(x+XOffset, y+YOffset, z+ZOffset)); //accomodate for walls and floors
-				//the following is weird, should be yaw, but doesn't give expected results.
-				//to acommodate, modifiers are done to roll section
-				GetController()->SetControlRotation(FRotator(PitchOffset, -1*(RollOffset+r), YawOffset));
-			}
-
-			
-			//CREATE
 			const TArray<TSharedPtr<FJsonValue>> toCreate = JsonParsed->GetArrayField("create");
 			for (int i = 0; i < toCreate.Num(); i++)
 			{
@@ -192,8 +237,7 @@ void AViveViewCharacter::UpdateFromVive()
 
 		std::ofstream actorFReset;
 		actorFReset.open("ActorList.json");
-		actorFReset << "{\"avatar\": {\"changed\": false},";
-		actorFReset << "\"create\": [],\"move\": [],\"Destroy\": []}";
+		actorFReset << "{\"create\": [],\"move\": [],\"Destroy\": []}";
 		actorFReset.close();
 	}
 	else
@@ -210,7 +254,7 @@ void AViveViewCharacter::UpdateFromVive()
 
 
 
-void AViveViewCharacter::Tick(float DeltaSeconds)
+void AViveView_2Character::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	UpdateFromVive();
@@ -262,6 +306,3 @@ void AViveViewCharacter::Tick(float DeltaSeconds)
 
 	return;
 }
-
-
-

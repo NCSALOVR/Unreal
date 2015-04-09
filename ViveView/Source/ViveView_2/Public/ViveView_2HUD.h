@@ -1,10 +1,10 @@
 // Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
 #pragma once 
 #include "GameFramework/HUD.h"
-#include "ViveViewHUD.generated.h"
+#include "ViveView_2HUD.generated.h"
 
 UCLASS()
-class AViveViewHUD : public AHUD
+class AViveView_2HUD : public AHUD
 {
 	GENERATED_UCLASS_BODY()
 
