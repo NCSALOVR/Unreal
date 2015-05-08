@@ -26,6 +26,9 @@ AViveViewCharacter::AViveViewCharacter(const class FPostConstructInitializePrope
 	RollOffset = 0;
 	YawOffset = 0; //face east
 
+	// Since we must use SetActorLocation each update, if we don't get an update for the avatar then just use the previous position
+	prevAvatar = FVector(XOffset, YOffset, ZOffset);
+
 
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = PCIP.CreateDefaultSubobject<UCameraComponent>(this, TEXT("FirstPersonCamera"));
@@ -65,6 +68,8 @@ AViveViewCharacter::AViveViewCharacter(const class FPostConstructInitializePrope
 	ActorsToCreate.Init(0);
 	ActorsToMove.Init(0);
 	ActorsToDestroy.Init(0);
+
+	IHeadMountedDisplay.ResetOrientationAndPosition();
 }
 
 
@@ -72,8 +77,11 @@ AViveViewCharacter::AViveViewCharacter(const class FPostConstructInitializePrope
 void AViveViewCharacter::UpdateFromVive()
 {
 	//bruteforce to a default location if VIVE doen't update
-	SetActorLocation(FVector(XOffset, YOffset, ZOffset)); //accomodate for walls and floors
+	//SetActorLocation(FVector(XOffset, YOffset, ZOffset)); //accomodate for walls and floors
 
+
+	//brute force to the previous location if VIVE doesn't update
+	SetActorLocation(prevAvatar);  
 
 	std::ifstream actorF;
 	actorF.open("ActorList.json");
@@ -113,6 +121,7 @@ void AViveViewCharacter::UpdateFromVive()
 
 
 				SetActorLocation(FVector(x + XOffset, y + YOffset, z + ZOffset)); //accomodate for walls and floors
+				prevAvatar = FVector(x + XOffset, y + YOffset, z + ZOffset);
 				//the following is weird, should be yaw, but doesn't give expected results.
 				//to acommodate, modifiers are done to roll section
 				//GetController()->SetControlRotation(FRotator(PitchOffset, -1 * (RollOffset + r), YawOffset));
@@ -319,6 +328,4 @@ void AViveViewCharacter::Tick(float DeltaSeconds)
 
 	return;
 }
-
-
 

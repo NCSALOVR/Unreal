@@ -3,11 +3,11 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class ViveView_2EditorTarget : TargetRules
+public class ViveViewTarget : TargetRules
 {
-	public ViveView_2EditorTarget(TargetInfo Target)
+	public ViveViewTarget(TargetInfo Target)
 	{
-		Type = TargetType.Editor;
+		Type = TargetType.Game;
 	}
 
 	//
@@ -20,6 +20,6 @@ public class ViveView_2EditorTarget : TargetRules
 		ref List<string> OutExtraModuleNames
 		)
 	{
-		OutExtraModuleNames.Add("ViveView_2");
+		OutExtraModuleNames.Add("ViveView");
 	}
 }

@@ -16,7 +16,7 @@ struct FObjectActor
 
 
 
-		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Vive)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Vive)
 		FString Id;
 
 	//location
@@ -67,6 +67,9 @@ class AViveViewCharacter : public ACharacter
 		double RollOffset;
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 		double YawOffset;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+		FVector prevAvatar;
 
 
 
